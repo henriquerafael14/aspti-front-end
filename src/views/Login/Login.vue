@@ -15,14 +15,28 @@
                             </label>
                             <label class="block mt-9">
                                 <span class="text-lg font-medium text-gray-800">
-                                    <input v-model="state.password.value" type="email" :class="{'border-brand-danger': !!state.password.errorMessage}" class="block w-full px-4 py-3 mt-1 text-lg bg-gray-100 border-2 border-transparent rounded" placeholder="Senha">
+                                    <input v-model="state.password.value" type="password" :class="{'border-brand-danger': !!state.password.errorMessage}" class="block w-full px-4 py-3 mt-1 text-lg bg-gray-100 border-2 border-transparent rounded" placeholder="Senha">
                                 </span>
                                 <span v-if="!!state.password.errorMessage" class="block font-medium text-brand-danger">
                                     {{ state.password.errorMessage }}
                                 </span>
                             </label>
 
-                            <button :disabled="state.isLoading" :class="{ 'opacity-50': state.isLoading }" class="px-8 py-3 mt-10 text-2xl font-bold text-white rounded-full bg-brand-main focus:outline-none ">Entrar</button>
+                            <button :disabled="state.isLoading" :class="{ 'opacity-50': state.isLoading }" class="w-full px-8 py-3 mt-10 text-2xl font-bold text-white rounded-full bg-brand-main focus:outline-none ">Entrar</button>
+                            <div class="flex items-center justify-between">
+                              <div class="flex items-start py-8">
+                                <div class="flex items-center h-5">
+                                  <input id="remember" aria-describedby="remember" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800" required="">
+                                </div>
+                                <div class="ml-3 text-sm">
+                                  <label for="remember" class="text-gray-500 dark:text-gray-300">Lembrar-me</label>
+                                </div>
+                              </div>
+                              <a href="#" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Esqueceu a senha?</a>
+                            </div>
+                            <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+                                Você ainda não possui uma conta? <a href="#" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Cadastrar</a>
+                            </p>
                         </form>
                     </div>
                 </div>
@@ -33,10 +47,13 @@
 
 <script>
 import { reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import { useField } from 'vee-validate'
 import { validateEmptyAndLength3, validateEmptyAndEmail } from '../../utils/validators'
+import services from '../../services'
 export default {
   setup () {
+    const router = useRouter()
     const {
       value: emailValue,
       errorMessage: emailErrorMessage
@@ -57,7 +74,22 @@ export default {
         errorMessage: passwordErrorMessage
       }
     })
-    function handleSubmit () {
+    async function handleSubmit () {
+      try {
+        state.isLoading = true
+        const { data, errors } = await services.auth.login({
+          email: state.email.value,
+          password: state.password.value
+        })
+        if (!errors) {
+          window.localStorage.setItem('token', data.accessToken)
+          router.push({ name: 'Home' })
+          return
+        }
+      } catch (error) {
+        state.isLoading = false
+        state.hasErrors = !!error
+      }
     }
     return {
       state,
