@@ -3,30 +3,30 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
-import Login from './Login.vue'
-import { useRouter } from 'vue-router'
+import { onMounted } from "vue";
+import Login from "./Login.vue";
+import { useRouter } from "vue-router";
 
 export default {
   components: { Login },
   setup () {
-    const router = useRouter()
+    const router = useRouter();
 
     onMounted(() => {
-      const token = window.localStorage.getItem('token')
+      const token = window.localStorage.getItem("token");
       if (token) {
-        router.push({ name: '' })
+        router.push({ name: "" });
       }
-    })
+    });
 
-    function handleLogin () { }
+    function handleLogin () { };
 
-    function handleAccountCreate () { }
+    function handleAccountCreate () { };
 
     return {
       handleLogin,
-      handleAccountCreate
-    }
-  }
-}
+      handleAccountCreate,
+    };
+  },
+};
 </script>

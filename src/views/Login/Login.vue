@@ -26,7 +26,7 @@
                             <div class="flex items-center justify-between">
                               <div class="flex items-start py-8">
                                 <div class="flex items-center h-5">
-                                  <input id="remember" aria-describedby="remember" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800" required="">
+                                  <input id="remember" aria-describedby="remember" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800">
                                 </div>
                                 <div class="ml-3 text-sm">
                                   <label for="remember" class="text-gray-500 dark:text-gray-300">Lembrar-me</label>
@@ -46,57 +46,62 @@
 </template>
 
 <script>
-import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useField } from 'vee-validate'
-import { validateEmptyAndLength3, validateEmptyAndEmail } from '../../utils/validators'
-import services from '../../services'
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
+import { useField } from "vee-validate";
+import { validateEmptyAndLength3, validateEmptyAndEmail } from "../../utils/validators";
+import services from "../../services";
 export default {
   setup () {
-    const router = useRouter()
+    const router = useRouter();
     const {
       value: emailValue,
-      errorMessage: emailErrorMessage
-    } = useField('email', validateEmptyAndEmail)
+      errorMessage: emailErrorMessage,
+    } = useField("email", validateEmptyAndEmail);
     const {
       value: passwordValue,
-      errorMessage: passwordErrorMessage
-    } = useField('password', validateEmptyAndLength3)
+      errorMessage: passwordErrorMessage,
+    } = useField("password", validateEmptyAndLength3);
     const state = reactive({
       hasErrors: false,
       isLoading: false,
       email: {
         value: emailValue,
-        errorMessage: emailErrorMessage
+        errorMessage: emailErrorMessage,
       },
       password: {
         value: passwordValue,
-        errorMessage: passwordErrorMessage
-      }
-    })
+        errorMessage: passwordErrorMessage,
+      },
+    });
+
     async function handleSubmit () {
       try {
-        state.isLoading = true
+        // debbuger;
+        state.isLoading = true;
+
         const { data, errors } = await services.auth.login({
           email: state.email.value,
-          password: state.password.value
-        })
+          password: state.password.value,
+        });
+
         if (!errors) {
-          window.localStorage.setItem('token', data.accessToken)
-          router.push({ name: 'Home' })
-          return
+          window.localStorage.setItem("token", data.accessToken);
+          router.push({ name: "Home" });
+          return;
         }
       } catch (error) {
-        state.isLoading = false
-        state.hasErrors = !!error
+        state.isLoading = false;
+        state.hasErrors = !!error;
       }
-    }
+    };
+
     return {
       state,
-      handleSubmit
-    }
-  }
-}
+      handleSubmit,
+    };
+  },
+};
 </script>
 
 <style>
