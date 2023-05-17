@@ -1,8 +1,9 @@
 export default httpClient => ({
-  login: async ({ email, password }) => {
+  login: async ({ nomeUsuarioEmail, senha }) => {
+    // debbuger;
     const response = await httpClient.post("/autenticar", {
-      email,
-      password,
+      nomeUsuarioEmail,
+      senha,
     });
 
     let errors = null;
@@ -13,9 +14,9 @@ export default httpClient => ({
         statusText: response.request.statusText,
       };
     }
-
+    console.log("response", response);
     return {
-      data: response.data,
+      data: response.data.data,
       errors,
     };
   },

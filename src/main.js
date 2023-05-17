@@ -6,6 +6,8 @@ import "animate.css";
 import "@/assets/css/tailwind.css";
 import "@/assets/css/fonts.css";
 
+// require("dotenv").config();
+
 const app = createApp(App);
 app.use(router);
 app.mount("#app");
